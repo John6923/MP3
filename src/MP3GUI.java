@@ -6,6 +6,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -29,7 +30,6 @@ public class MP3GUI extends JFrame{
 	JComboBox<String> rotationsBox;
 	JPanel rotationalPanel;
 	JPanel keyedRotationalPanel;
-	JPanel keyAndRotationPanel;
 	JPanel keyPanel;
 	JLabel keyLabel;
 	JTextArea keyArea;
@@ -44,15 +44,11 @@ public class MP3GUI extends JFrame{
 		setTitle("MP3");
 		
 		//Top
-		messageArea = new JTextArea();
-		messageArea.setMaximumSize(new Dimension(500,100));
-		messageArea.setPreferredSize(new Dimension(500,100));
+		messageArea = new JTextArea(5,40);
 		
 		//Middle
 		modeBox = new JComboBox<String>(options);
 		modeBox.addActionListener(new ModeHandler());
-		modeBox.setMaximumSize(new Dimension(500,25));
-		modeBox.setPreferredSize(new Dimension(500,25));
 		
 		//Bottom
 		
@@ -66,62 +62,60 @@ public class MP3GUI extends JFrame{
 		encryptDecryptPanel.add(decryptButton);
 		
 		//Area for decrypted Message
-		decryptArea = new JTextArea();
+		decryptArea = new JTextArea(5,40);
 		decryptArea.setEditable(false);
 		
 		//Rotational Only
 		rotationsBox = new JComboBox<String>(rotations);
 		rotationLabel = new JLabel("Rotation: ");
-		rotationPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		rotationPanel = new JPanel();
+		rotationPanel.setLayout(new BoxLayout(rotationPanel, BoxLayout.X_AXIS));
 		rotationPanel.add(rotationLabel);
 		rotationPanel.add(rotationsBox);
 		
 		//Key Only
 		keyLabel = new JLabel("Key:");
 		keyArea = new JTextArea();
-		keyPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		keyPanel = new JPanel();
+		keyPanel.setLayout(new BoxLayout(keyPanel, BoxLayout.X_AXIS));
 		keyPanel.add(keyLabel);
 		keyPanel.add(keyArea);
 		
 		//Rotational Panel -- The big picture
 		rotationalPanel = new JPanel();
-		rotationalPanel.setLayout(new BorderLayout());
+		rotationalPanel.setLayout(new BoxLayout(rotationalPanel, BoxLayout.Y_AXIS));
 		rotationalPanel.add(rotationPanel,BorderLayout.NORTH);
 		rotationalPanel.add(decryptArea, BorderLayout.CENTER);
 		rotationalPanel.add(encryptDecryptPanel,BorderLayout.SOUTH);
-		rotationalPanel.setPreferredSize(new Dimension(500,200));
-		rotationalPanel.setMaximumSize(new Dimension(500,200));
 		
 		//Keyed Rotational Panel
-		keyAndRotationPanel = new JPanel(new GridLayout(1,2));
-		keyAndRotationPanel.add(keyLabel);
-		keyAndRotationPanel.add(keyArea);
-		keyedRotationalPanel = new JPanel(new BorderLayout());
-		keyedRotationalPanel.add(keyAndRotationPanel,BorderLayout.NORTH);
-		keyedRotationalPanel.add(decryptArea, BorderLayout.CENTER);
-		keyedRotationalPanel.add(encryptDecryptPanel,BorderLayout.SOUTH);
-		keyedRotationalPanel.setPreferredSize(new Dimension(500,200));
-		keyedRotationalPanel.setMaximumSize(new Dimension(500,200));
+		
+		keyedRotationalPanel = new JPanel();
+		keyedRotationalPanel.setLayout(new BoxLayout(keyedRotationalPanel, BoxLayout.Y_AXIS));
+		keyedRotationalPanel.add(rotationPanel);
+		keyedRotationalPanel.add(keyPanel);
+		keyedRotationalPanel.add(decryptArea);
+		keyedRotationalPanel.add(encryptDecryptPanel);
 
-		setLayoutKeyedRotational();
+		setLayoutNone();
 	}
 	
 	public void setLayoutNone(){
 		Container c = getContentPane();
 		c.removeAll();
-		c.setLayout(new BorderLayout());
-		c.add(messageArea, BorderLayout.NORTH);
-		c.add(modeBox, BorderLayout.CENTER);
+		c.setLayout(new BoxLayout(c,BoxLayout.Y_AXIS));
+		c.add(messageArea);
+		c.add(modeBox);
 		pack();
 	}
 	
 	public void setLayoutRotational(){
 		Container c = getContentPane();
 		c.removeAll();
-		c.setLayout(new BorderLayout());
-		c.add(messageArea, BorderLayout.NORTH);
-		c.add(modeBox, BorderLayout.CENTER);
-		c.add(rotationalPanel, BorderLayout.SOUTH);
+		c.setLayout(new BoxLayout(c,BoxLayout.Y_AXIS));
+		c.add(messageArea);
+		c.add(modeBox);
+		c.add(rotationalPanel);
 		pack();
 		
 	}
@@ -129,10 +123,10 @@ public class MP3GUI extends JFrame{
 	public void setLayoutKeyedRotational(){
 		Container c = getContentPane();
 		c.removeAll();
-		c.setLayout(new BorderLayout());
-		c.add(messageArea, BorderLayout.NORTH);
-		c.add(modeBox, BorderLayout.CENTER);
-		c.add(keyedRotationalPanel, BorderLayout.SOUTH);
+		c.setLayout(new BoxLayout(c,BoxLayout.Y_AXIS));
+		c.add(messageArea);
+		c.add(modeBox);
+		c.add(keyedRotationalPanel);
 		pack();
 	}
 	
