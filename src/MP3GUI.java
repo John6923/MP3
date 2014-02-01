@@ -1,8 +1,8 @@
-import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -11,7 +11,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
@@ -28,8 +27,6 @@ public class MP3GUI extends JFrame{
 	JTextArea decryptArea;
 	String[] rotations = "0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25".split(" ");
 	JComboBox<String> rotationsBox;
-	JPanel rotationalPanel;
-	JPanel keyedRotationalPanel;
 	JPanel keyPanel;
 	JLabel keyLabel;
 	JTextArea keyArea;
@@ -37,10 +34,13 @@ public class MP3GUI extends JFrame{
 	JLabel rotationLabel;
 	
 	
+	Message message;
+	
+	
 
 	public MP3GUI(){
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setResizable(false);
+		setResizable(true);
 		setTitle("MP3");
 		
 		//Top
@@ -63,85 +63,139 @@ public class MP3GUI extends JFrame{
 		
 		//Area for decrypted Message
 		decryptArea = new JTextArea(5,40);
-		decryptArea.setEditable(false);
 		
 		//Rotational Only
 		rotationsBox = new JComboBox<String>(rotations);
 		rotationLabel = new JLabel("Rotation: ");
+		JPanel subrotationPanel = new JPanel();
+		subrotationPanel.setLayout(new BoxLayout(subrotationPanel, BoxLayout.X_AXIS));
+		subrotationPanel.add(rotationLabel);
+		subrotationPanel.add(rotationsBox);
 		rotationPanel = new JPanel();
-		rotationPanel.setLayout(new BoxLayout(rotationPanel, BoxLayout.X_AXIS));
-		rotationPanel.add(rotationLabel);
-		rotationPanel.add(rotationsBox);
+		GridBagLayout g;
+		GridBagConstraints gc = new GridBagConstraints();
+		rotationPanel.setLayout(g = new GridBagLayout());
+		JLabel subLabel = new JLabel(" ");
+		JLabel subLabel2 = new JLabel(" ");
+		g.setConstraints(subLabel, gc);
+		rotationPanel.add(subLabel);
+		gc.gridwidth = 2;
+		g.setConstraints(subrotationPanel, gc);
+		rotationPanel.add(subrotationPanel);
+		gc.gridwidth = GridBagConstraints.REMAINDER;
+		g.setConstraints(subLabel2, gc);
+		rotationPanel.add(subLabel2);
+		
 		
 		//Key Only
-		keyLabel = new JLabel("Key:");
-		keyArea = new JTextArea();
+		keyLabel = new JLabel("Key: ");
+		keyArea = new JTextArea(1,20);
 		keyPanel = new JPanel();
-		keyPanel.setLayout(new BoxLayout(keyPanel, BoxLayout.X_AXIS));
-		keyPanel.add(keyLabel);
-		keyPanel.add(keyArea);
+		gc = new GridBagConstraints();
+		keyPanel.setLayout(g = new GridBagLayout());
+		JPanel subkeyPanel = new JPanel();
+		subLabel = new JLabel(" ");
+		subLabel2 = new JLabel(" ");
+		subkeyPanel.setLayout(new BoxLayout(subkeyPanel, BoxLayout.X_AXIS));
+		subkeyPanel.add(keyLabel);
+		subkeyPanel.add(keyArea);
+		g.setConstraints(subLabel, gc);
+		keyPanel.add(subLabel);
+		gc.gridwidth = 2;
+		g.setConstraints(subkeyPanel, gc);
+		keyPanel.add(subkeyPanel);
+		gc.gridwidth = GridBagConstraints.REMAINDER;
+		g.setConstraints(subLabel2, gc);
+		keyPanel.add(subLabel2);
 		
-		//Rotational Panel -- The big picture
-		rotationalPanel = new JPanel();
-		rotationalPanel.setLayout(new BoxLayout(rotationalPanel, BoxLayout.Y_AXIS));
-		rotationalPanel.add(rotationPanel,BorderLayout.NORTH);
-		rotationalPanel.add(decryptArea, BorderLayout.CENTER);
-		rotationalPanel.add(encryptDecryptPanel,BorderLayout.SOUTH);
-		
-		//Keyed Rotational Panel
-		
-		keyedRotationalPanel = new JPanel();
-		keyedRotationalPanel.setLayout(new BoxLayout(keyedRotationalPanel, BoxLayout.Y_AXIS));
-		keyedRotationalPanel.add(rotationPanel);
-		keyedRotationalPanel.add(keyPanel);
-		keyedRotationalPanel.add(decryptArea);
-		keyedRotationalPanel.add(encryptDecryptPanel);
 
+
+		Container c = getContentPane();
+		c.removeAll();
+		c.setLayout(new BoxLayout(c,BoxLayout.Y_AXIS));
+		c.add(messageArea);
+		c.add(modeBox);
+		c.add(rotationPanel);
+		c.add(keyPanel);
+		c.add(decryptArea);
+		c.add(encryptDecryptPanel);
+		
 		setLayoutNone();
+
 	}
 	
 	public void setLayoutNone(){
-		Container c = getContentPane();
-		c.removeAll();
-		c.setLayout(new BoxLayout(c,BoxLayout.Y_AXIS));
-		c.add(messageArea);
-		c.add(modeBox);
+		rotationPanel.setVisible(false);
+		keyPanel.setVisible(false);
+		decryptArea.setVisible(false);
+		encryptDecryptPanel.setVisible(false);
+		setMinimumSize(new Dimension(0,0));
 		pack();
+		setMinimumSize(getSize());
+		
+		message = new Message(messageArea.getText());
 	}
 	
 	public void setLayoutRotational(){
-		Container c = getContentPane();
-		c.removeAll();
-		c.setLayout(new BoxLayout(c,BoxLayout.Y_AXIS));
-		c.add(messageArea);
-		c.add(modeBox);
-		c.add(rotationalPanel);
+		rotationPanel.setVisible(true);
+		keyPanel.setVisible(false);
+		decryptArea.setVisible(true);
+		encryptDecryptPanel.setVisible(true);
+		setMinimumSize(new Dimension(0,0));
 		pack();
+		setMinimumSize(getSize());
 		
+		message = new RotatedMessage(messageArea.getText());
 	}
 	
 	public void setLayoutKeyedRotational(){
-		Container c = getContentPane();
-		c.removeAll();
-		c.setLayout(new BoxLayout(c,BoxLayout.Y_AXIS));
-		c.add(messageArea);
-		c.add(modeBox);
-		c.add(keyedRotationalPanel);
+		rotationPanel.setVisible(true);
+		keyPanel.setVisible(true);
+		decryptArea.setVisible(true);
+		encryptDecryptPanel.setVisible(true);
 		pack();
+		setMinimumSize(getSize());
+		
+		message = new KeyedRotatedMessage(messageArea.getText());
 	}
 	
 	
 	public class EncryptHander implements ActionListener {
 		
 		public void actionPerformed(ActionEvent e) {
-			
+			if(message instanceof KeyedRotatedMessage){
+				KeyedRotatedMessage krmessage = new KeyedRotatedMessage(messageArea.getText());
+				System.out.println("\'" + keyArea.getText() + "\'");
+				krmessage.setKey(keyArea.getText());
+				krmessage.setRotation(rotationsBox.getSelectedIndex());
+				krmessage.encrypt();
+				decryptArea.setText(krmessage.getMessage());
+			}
+			else if(message instanceof RotatedMessage){
+				RotatedMessage rmessage = new RotatedMessage(messageArea.getText());
+				rmessage.setRotation(rotationsBox.getSelectedIndex());
+				rmessage.encrypt();
+				decryptArea.setText(rmessage.getMessage());
+			}
 		}
 	}
 	
 	public class DecryptHandler implements ActionListener {
 		
 		public void actionPerformed(ActionEvent e) {
-			
+			if(message instanceof KeyedRotatedMessage){
+				KeyedRotatedMessage krmessage = new KeyedRotatedMessage(decryptArea.getText());
+				krmessage.setKey(keyArea.getText());
+				krmessage.decrypt();
+				messageArea.setText(krmessage.getMessage());
+				rotationsBox.setSelectedIndex(krmessage.getRotation());
+			}
+			else if(message instanceof RotatedMessage){
+				RotatedMessage rmessage = new RotatedMessage(decryptArea.getText());
+				rmessage.decrypt();
+				messageArea.setText(rmessage.getMessage());
+				rotationsBox.setSelectedIndex(rmessage.getRotation());
+			}
 		}
 	}
 	
@@ -162,5 +216,4 @@ public class MP3GUI extends JFrame{
 			}
 		}
 	}
-
 }
