@@ -4,8 +4,7 @@ public class RotatedMessage extends Message {
 	int rotationFactor;
 	char[] substitutionPattern;
 	
-	public RotatedMessage(String rotatedMessage)
-	{
+	public RotatedMessage(String rotatedMessage) {
 		super(rotatedMessage);
 		
 		rotationFactor = 0;
@@ -13,15 +12,13 @@ public class RotatedMessage extends Message {
 		for (int i=0; i<26; i++) substitutionPattern[i] = (char)(i+97);
 	}
 	
-	public void encrypt()
-	{
+	public void encrypt(){
 		char c;
 		int pos;
 		String newstr;
 		
 		newstr = "";
-		for (int i=0; i<message.length(); i++)
-		{
+		for (int i=0; i<message.length(); i++){
 			c = message.charAt(i);
 			if (Character.isUpperCase(c)) {
 				newstr += (char)((substitutionPattern[c+32-97])-32);
@@ -34,8 +31,7 @@ public class RotatedMessage extends Message {
 		message = newstr;
 	}
 	
-	public boolean decrypt()
-	{
+	public boolean decrypt(){
 		RotatedMessage rm;
 		int r;
 		
@@ -56,13 +52,11 @@ public class RotatedMessage extends Message {
 		}
 	}
 	
-	public int getRotation()
-	{
+	public int getRotation(){
 		return rotationFactor;
 	}
 	
-	public void setRotation(int rotation)
-	{
+	public void setRotation(int rotation){
 		char[] newPattern = new char[26];
 		
 		if (rotation >= 26) {
@@ -79,13 +73,11 @@ public class RotatedMessage extends Message {
 		for (int i=0; i<26; i++) substitutionPattern[i] = newPattern[i]; 
 	}
 	
-	public String getSubstitutionPattern()
-	{
+	public String getSubstitutionPattern(){
 		return new String(substitutionPattern);
 	}
 	
-	public String toString()
-	{
+	public String toString(){
 		return message;
 	}
 }

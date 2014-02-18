@@ -120,7 +120,7 @@ public class KeyedRotatedMessage extends RotatedMessage {
 			if (krm.verify()) break;
 		}
 		
-		if (r == 27) {
+		if (r == 26) {
 			return false;
 		} else {
 			rotationFactor = krm.getRotation();
